@@ -58,19 +58,15 @@ class BgTracker extends Component {
                 <Alert variant="danger">
                     <Alert.Heading>Смъртни случаи (днес): {total_new_deaths_today}</Alert.Heading>
                 </Alert>
-                <small><a href={"https://thevirustracker.com/api"}>api</a></small>
             </div>
         )
     };
 
     render() {
-        console.log(this.state.countrydata["total_cases"]);
         return (
-            <Container>
-                {this.state.isLoading
-                    ? <h4>Loading...</h4>
-                    : this.resultsElement()}
-            </Container>
+            this.state.isLoading
+                ? <h4>Loading...</h4>
+                : this.resultsElement()
         );
     }
 }
