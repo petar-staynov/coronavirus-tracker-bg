@@ -34,6 +34,14 @@ class BgTracker extends Component {
             total_serius_cases,
         } = this.state.countrydata;
 
+        let deathPerc = ((total_deaths / total_cases) * 100).toFixed(2);
+        deathPerc = isFinite(deathPerc) ? deathPerc : 0;
+
+        let recPerc = ((total_recovered / total_cases) * 100).toFixed(2);
+        recPerc = isFinite(recPerc) ? recPerc : 0;
+
+        let newPerc = ((total_new_cases_today / total_cases) * 100).toFixed(2);
+        newPerc = isFinite(newPerc) ? newPerc : 0;
 
         return (
             <div style={{textAlign: 'center'}}>
@@ -44,16 +52,16 @@ class BgTracker extends Component {
                     <Alert.Heading>Общ брой случаи: {total_cases}</Alert.Heading>
                 </Alert>
                 <Alert variant="danger">
-                    <Alert.Heading>Смъртни случаи: {total_deaths}</Alert.Heading>
+                    <Alert.Heading>Смъртни случаи: {total_deaths} ({deathPerc}%)</Alert.Heading>
                 </Alert>
                 <Alert variant="success">
-                    <Alert.Heading>Излекувани: {total_recovered}</Alert.Heading>
+                    <Alert.Heading>Излекувани: {total_recovered} ({recPerc}%)</Alert.Heading>
                 </Alert>
                 <Alert variant="primary">
                     <Alert.Heading>Активни случаи: {total_active_cases}</Alert.Heading>
                 </Alert>
                 <Alert variant="danger">
-                    <Alert.Heading>Нови случаи (днес): {total_new_cases_today}</Alert.Heading>
+                    <Alert.Heading>Нови случаи (днес): {total_new_cases_today} (+{newPerc}%)</Alert.Heading>
                 </Alert>
                 <Alert variant="danger">
                     <Alert.Heading>Смъртни случаи (днес): {total_new_deaths_today}</Alert.Heading>
