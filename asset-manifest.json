@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/coronavirus-tracker-bg/static/css/main.76e27cc9.chunk.css",
-    "main.js": "/coronavirus-tracker-bg/static/js/main.334566c6.chunk.js",
-    "main.js.map": "/coronavirus-tracker-bg/static/js/main.334566c6.chunk.js.map",
+    "main.css": "/coronavirus-tracker-bg/static/css/main.1eb80094.chunk.css",
+    "main.js": "/coronavirus-tracker-bg/static/js/main.35a1db6d.chunk.js",
+    "main.js.map": "/coronavirus-tracker-bg/static/js/main.35a1db6d.chunk.js.map",
     "runtime-main.js": "/coronavirus-tracker-bg/static/js/runtime-main.e4ed55ae.js",
     "runtime-main.js.map": "/coronavirus-tracker-bg/static/js/runtime-main.e4ed55ae.js.map",
     "static/css/2.de424728.chunk.css": "/coronavirus-tracker-bg/static/css/2.de424728.chunk.css",
-    "static/js/2.fd80321d.chunk.js": "/coronavirus-tracker-bg/static/js/2.fd80321d.chunk.js",
-    "static/js/2.fd80321d.chunk.js.map": "/coronavirus-tracker-bg/static/js/2.fd80321d.chunk.js.map",
+    "static/js/2.3be4824a.chunk.js": "/coronavirus-tracker-bg/static/js/2.3be4824a.chunk.js",
+    "static/js/2.3be4824a.chunk.js.map": "/coronavirus-tracker-bg/static/js/2.3be4824a.chunk.js.map",
     "index.html": "/coronavirus-tracker-bg/index.html",
-    "precache-manifest.74c522da05f48fdf30f1c601d30b2642.js": "/coronavirus-tracker-bg/precache-manifest.74c522da05f48fdf30f1c601d30b2642.js",
+    "precache-manifest.0f967f6c34990ce5e4b6f7eadab586c0.js": "/coronavirus-tracker-bg/precache-manifest.0f967f6c34990ce5e4b6f7eadab586c0.js",
     "service-worker.js": "/coronavirus-tracker-bg/service-worker.js",
     "static/css/2.de424728.chunk.css.map": "/coronavirus-tracker-bg/static/css/2.de424728.chunk.css.map",
-    "static/css/main.76e27cc9.chunk.css.map": "/coronavirus-tracker-bg/static/css/main.76e27cc9.chunk.css.map",
-    "static/js/2.fd80321d.chunk.js.LICENSE.txt": "/coronavirus-tracker-bg/static/js/2.fd80321d.chunk.js.LICENSE.txt"
+    "static/css/main.1eb80094.chunk.css.map": "/coronavirus-tracker-bg/static/css/main.1eb80094.chunk.css.map",
+    "static/js/2.3be4824a.chunk.js.LICENSE.txt": "/coronavirus-tracker-bg/static/js/2.3be4824a.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.e4ed55ae.js",
     "static/css/2.de424728.chunk.css",
-    "static/js/2.fd80321d.chunk.js",
-    "static/css/main.76e27cc9.chunk.css",
-    "static/js/main.334566c6.chunk.js"
+    "static/js/2.3be4824a.chunk.js",
+    "static/css/main.1eb80094.chunk.css",
+    "static/js/main.35a1db6d.chunk.js"
   ]
 }
