@@ -45,7 +45,7 @@ class BgTracker extends Component {
 
         return (
             <div style={{textAlign: 'center'}}>
-                <h1>COVID-19/2019-nCoV/Coronavirus <br/> България</h1>
+
                 <h4>{new Date().toLocaleDateString("bg")}</h4>
 
                 <Alert variant="secondary">

@@ -1,18 +1,31 @@
-import React from 'react';
+import React, {useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
-import BgTracker from "./components/BgTracker";
-import Container from "react-bootstrap/Container";
 import Footer from "./components/Footer";
+import Header from "./components/Header";
+import Tracker from "./components/Tracker";
 
-function App() {
-  return (
-      <Container>
-        <BgTracker/>
-        <Footer/>
-      </Container>
-  );
-}
+const App = () => {
+    if (!localStorage.getItem("country")) {
+        localStorage.setItem("country", "BG")
+    }
+
+    const [country, setCountry] = useState(localStorage.getItem("country"));
+
+    const setCountryHandle = (country) => {
+        localStorage.setItem("country", country);
+
+        setCountry(country);
+    };
+
+    return (
+        <div className="container text-center">
+            <Header country={country} setCountry={setCountryHandle}/>
+            <Tracker country={country} setCountry={setCountryHandle}/>
+            <Footer/>
+        </div>
+    );
+};
 
 export default App;
