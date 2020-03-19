@@ -1,7 +1,6 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {countriesData} from "../data/countriesData";
 import {DropdownButton, Dropdown} from "react-bootstrap";
-import {AppContext} from "../App";
 
 const Header = (props) => {
     const {country, setCountry} = props;
