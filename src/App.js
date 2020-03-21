@@ -15,7 +15,7 @@ const App = () => {
 
     const setCountryHandle = (country) => {
         localStorage.setItem("country", country);
-
+        // console.log('Update App Country');
         setCountry(country);
     };
 
