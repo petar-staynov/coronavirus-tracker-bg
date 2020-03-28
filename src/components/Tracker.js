@@ -115,7 +115,9 @@ const Tracker = (props) => {
                             <a href="https://www.worldometers.info/coronavirus/" target="_blank">
                                 За таблица виж тук: www.worldometers.info/coronavirus/</a>
                         </h4>)
-                        : <ApexChart chartData={componentState.chartData}/>
+                        : (
+                            <ApexChart chartData={componentState.chartData}/>
+                        )
                 }
             </div>
         );
@@ -123,7 +125,6 @@ const Tracker = (props) => {
         resultElement = (<h4>Грешка при зареждането, моля опитайте по-късно.</h4>)
     }
 
-//<ApexChart chartData={componentState.chartData}/>
     return (
         <div>
             {resultElement}

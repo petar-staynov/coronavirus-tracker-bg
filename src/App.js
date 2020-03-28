@@ -25,6 +25,7 @@ const App = () => {
             <Tracker country={country} setCountry={setCountryHandle}/>
             <Footer/>
         </div>
+
     );
 };
 

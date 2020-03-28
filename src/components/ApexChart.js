@@ -2,126 +2,273 @@ import React, {useEffect, useState} from "react";
 import Chart from 'react-apexcharts'
 
 const ApexChart = (props) => {
-    const [componentState, setComponentState] = useState(
-        {
+    // Total cases chart
+    const [componentState, setComponentState] = useState({
+        totalCasesChart: {
             series: [{
-                name: "Coronavirus cases",
-                data: [],
+                data: []
             }],
             options: {
                 chart: {
-                    height: 350,
-                    type: 'line',
-                    zoom: {
-                        enabled: false
+                    type: 'bar',
+                    height: 350
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
                     }
                 },
                 dataLabels: {
                     enabled: true
                 },
-                stroke: {
-                    curve: 'straight'
-                },
-                title: {
-                    text: `Общ брой случаи по дата:`,
-                    align: 'center'
-                },
-                grid: {
-                    row: {
-                        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                        opacity: 0.5
-                    },
-                },
                 xaxis: {
                     categories: [],
                 }
             },
-        });
+        },
+        totalDeathCasesChart: {
 
-    useEffect(() => {
-        const {chartData} = props;
-        if (Object.keys(chartData).length <= 0) return undefined;
-
-        const timeline = chartData.timeline;
-
-        //Extract data for chart
-        let skipUntilNow = true;
-        let old_total_cases = null;
-
-        let timelineShort = [];
-        let timelineDates = []; //IMP
-        let timelineDateCases = []; //IMP
-        Object.keys(timeline).forEach((key) => {
-            const dayInfo = timeline[key];
-            const {
-                new_daily_cases,
-                new_daily_deaths,
-                total_cases,
-                total_recoveries,
-                total_deaths
-            } = dayInfo;
-
-            const activeCases = total_cases - (total_recoveries + total_deaths);
-
-            //Skip INITIAL dates without reported numbers
-            if (new_daily_cases > 0) skipUntilNow = false;
-            if (!skipUntilNow) {
-                if (total_cases !== old_total_cases) {
-                    timelineShort.push(dayInfo);
-
-                    //turn date key "1/23/2020" to "23/1" format
-                    const dateParams = key.split('/');
-                    const dateFormated = `${dateParams[1]}/${dateParams[0]}`;
-                    timelineDates.push(dateFormated);
-
-                    timelineDateCases.push(total_cases);
-                    old_total_cases = total_cases;
-                }
-            }
-        });
-
-        //Remove last "stat" element from array which come from api
-        timelineDates.pop();
-        timelineDateCases.pop();
-
-        setComponentState({
-            ...componentState,
             series: [{
-                ...componentState.series,
-                data: timelineDateCases,
+                data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
             }],
             options: {
-                ...componentState.options,
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                    }
+                },
+                dataLabels: {
+                    enabled: true
+                },
                 xaxis: {
-                    categories: timelineDates,
+                    categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
+                        'United States', 'China', 'Germany'
+                    ],
                 }
+            },
+        },
+        totalRecoveredCasesChart: {
+            series: [{
+                data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
+            }],
+            options: {
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                    }
+                },
+                dataLabels: {
+                    enabled: true
+                },
+                xaxis: {
+                    categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
+                        'United States', 'China', 'Germany'
+                    ],
+                }
+            },
+        },
+        totalActiveCasesChart: {
+            series: [{
+                data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
+            }],
+            options: {
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                    }
+                },
+                dataLabels: {
+                    enabled: true
+                },
+                xaxis: {
+                    categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
+                        'United States', 'China', 'Germany'
+                    ],
+                }
+            },
+        },
+        newCasesChart: {
+            series: [{
+                data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
+            }],
+            options: {
+                chart: {
+                    type: 'bar',
+                    height: 350
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                    }
+                },
+                dataLabels: {
+                    enabled: true
+                },
+                xaxis: {
+                    categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
+                        'United States', 'China', 'Germany'
+                    ],
+                }
+            },
+        },
+
+
+    });
+
+    const formatDate = (dateString) => {
+        //Format date from "1/23/2020" to "23/01"
+        const dateParams = dateString.split('/');
+        const dateFormated = `${dateParams[1]}/${dateParams[0]}`;
+        return dateFormated;
+    };
+
+    const sortObject = (o) => {
+        return Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {});
+    };
+
+    useEffect(() => {
+        const apiData = props.chartData;
+        if (Object.keys(apiData).length <= 0) return undefined;
+
+        const timelineDates = apiData.timeline;
+
+        //###Extract data for chart###
+        let skipEmptyDays = true;
+        let old_total_cases = null;
+
+        let datesArr = [];
+        let totalCasesArr = [];
+        let newCasesArr = [];
+        let totalActiveCasesArr = [];
+
+
+        const timelineDatesSorted = sortObject(timelineDates);
+        const numberOfDates = Object.keys(timelineDatesSorted).length;
+        let lastIndex = 0;
+        let lastTotalCases = 0;
+        Object.keys(timelineDatesSorted).forEach((date, index) => {
+            //date = key
+            const dayInfo = timelineDates[date];
+
+            const totalCases = Math.abs(dayInfo.total_cases);
+            //calculate new daily cases since API is unreliable
+            let newDailyCases = 0;
+            if (index > lastIndex) {
+                newDailyCases = Math.abs(lastTotalCases - totalCases);
+
+                lastIndex = index;
+                lastTotalCases = totalCases;
+            }
+            const recoveredCases = Math.abs(dayInfo.total_recoveries);
+            const deathCases = Math.abs(dayInfo.total_deaths);
+            const activeCases = totalCases - (recoveredCases + deathCases);
+
+
+            if (totalCases > 0) skipEmptyDays = false;
+            //Skip days with no data and the last two entries
+            if (!skipEmptyDays && index < numberOfDates - 1) {
+                datesArr.push(formatDate(date));
+                totalCasesArr.push(totalCases);
+                totalActiveCasesArr.push(activeCases);
+                newCasesArr.push(newDailyCases);
             }
         });
+
+
+        //Update components
+        const {
+            totalCasesChart,
+            totalDeathCasesChart,
+            totalRecoveredCasesChart,
+            totalActiveCasesChart,
+            newCasesChart
+        } = componentState;
+
+        setComponentState({
+            totalCasesChart: {
+                ...totalCasesChart,
+                series: [{
+                    ...totalCasesChart.series,
+                    data: totalCasesArr,
+                }],
+                options: {
+                    ...totalCasesChart.options,
+                    xaxis: {
+                        categories: datesArr,
+                    }
+                }
+            },
+            totalActiveCasesChart: {
+                ...totalActiveCasesChart,
+                series: [{
+                    ...totalActiveCasesChart.series,
+                    data: totalActiveCasesArr,
+                }],
+                options: {
+                    ...totalActiveCasesChart.options,
+                    xaxis: {
+                        categories: datesArr,
+                    }
+                }
+            },
+            newCasesChart: {
+                ...newCasesChart,
+                series: [{
+                    ...newCasesChart.series,
+                    data: newCasesArr,
+                }],
+                options: {
+                    ...newCasesChart.options,
+                    xaxis: {
+                        categories: datesArr,
+                    }
+                }
+            },
+        });
+
     }, [props]);
 
     const calculateElementHeight = () => {
-        let width = Math.max(window.screen.width, window.innerWidth);
-
-        if (width >= 1200) {
-            return 640;
-        } else if (width >= 992) {
-            return 640;
-        } else if (width >= 768) {
-            return 576;
-        } else if (width >= 576) {
-            return 480;
-        } else {
-            return 360;
-        }
+        const datesNumber = componentState.totalCasesChart.series[0].data.length;
+        return datesNumber * 20;
     };
 
     return (
-        <Chart options={componentState.options}
-               series={componentState.series}
-               type="bar"
-               width={"100%"}
-               height={calculateElementHeight()}
-        />
+        <div className="text-center">
+            <span><strong>Общ брой случаи по дата:</strong></span>
+            <Chart options={componentState.totalCasesChart.options}
+                   series={componentState.totalCasesChart.series}
+                   type="bar"
+                   width={"100%"}
+                   height={calculateElementHeight()}
+            />
+            <span><strong>Активни случаи по дата:</strong></span>
+            <Chart options={componentState.totalActiveCasesChart.options}
+                   series={componentState.totalActiveCasesChart.series}
+                   type="bar"
+                   width={"100%"}
+                   height={calculateElementHeight()}
+            />
+            <span><strong>Нови дневни случаи по дата:</strong></span>
+            <Chart options={componentState.newCasesChart.options}
+                   series={componentState.newCasesChart.series}
+                   type="bar"
+                   width={"100%"}
+                   height={calculateElementHeight()}
+            />
+        </div>
     );
 };
 
