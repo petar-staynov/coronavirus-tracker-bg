@@ -261,7 +261,7 @@ const ApexChart = (props) => {
                    width={"100%"}
                    height={calculateElementHeight()}
             />
-            <span><strong>Нови дневни случаи по дата:</strong></span>
+            <span><strong>Нови случаи по дата:</strong></span>
             <Chart options={componentState.newCasesChart.options}
                    series={componentState.newCasesChart.series}
                    type="bar"
