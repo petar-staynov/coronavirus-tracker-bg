@@ -1,23 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import axios from 'axios';
 import {Alert} from "react-bootstrap";
 import ApexChart from "./ApexChart";
 
 const Tracker = (props) => {
-    // console.log('Tracker render with country ' + props.country);
-    const {country} = props;
-
+    const {country, status, setStatus} = props;
 
     const [componentState, setComponentState] = useState(
         {
             countryData: {},
             chartData: {},
-            loadStatus: "loading",
         }
     );
 
+
     useEffect(() => {
-        // console.log("Parse country data for " + country);
         if (country === "GLOBAL") {
             axios.get("https://thevirustracker.com/free-api?global=stats")
                 .then(res => {
@@ -26,12 +23,10 @@ const Tracker = (props) => {
                     setComponentState({
                         ...componentState,
                         countryData: data.results[0],
-                        loadStatus: "completed"
                     });
+                    setStatus("completed");
                 })
-                .catch(e => setComponentState({
-                    ...componentState, loadStatus: "error"
-                }));
+                .catch(e => setStatus("error"));
             return;
         }
 
@@ -54,16 +49,14 @@ const Tracker = (props) => {
                                 countryCode: countryInfo.code,
                                 timeline: timelineItems,
                             },
-                            loadStatus: "completed",
                         });
+                        setStatus("completed");
                     })
             })
-            .catch(e => setComponentState({
-                ...componentState, loadStatus: "error"
-            }));
+            .catch(e => setStatus("error"));
 
 
-    }, [props]);
+    }, [status]);
 
 
     const {
@@ -86,51 +79,56 @@ const Tracker = (props) => {
     let newPerc = ((total_new_cases_today / total_cases) * 100).toFixed(2);
     newPerc = isFinite(newPerc) ? newPerc : 0;
 
-    let resultElement = <h4>Зареждане...</h4>;
+    const countryHasData =
+        (!(Object.keys(componentState.countryData).length === 0 && Object.keys(componentState.chartData).length === 0));
 
-    if (componentState.loadStatus === "completed") {
-        resultElement = (
-            <div>
-                <Alert variant="secondary">
-                    <Alert.Heading>Общ брой случаи: {total_cases}</Alert.Heading>
-                </Alert>
-                <Alert variant="danger">
-                    <Alert.Heading>Смъртни случаи: {total_deaths} ({deathPerc}%)</Alert.Heading>
-                </Alert>
-                <Alert variant="success">
-                    <Alert.Heading>Излекувани: {total_recovered} ({recPerc}%)</Alert.Heading>
-                </Alert>
-                <Alert variant="primary">
-                    <Alert.Heading>Активни случаи: {total_active_cases}</Alert.Heading>
-                </Alert>
-                <Alert variant="danger">
-                    <Alert.Heading>Нови случаи (днес): {total_new_cases_today} (+{newPerc}%)</Alert.Heading>
-                </Alert>
-                <Alert variant="danger">
-                    <Alert.Heading>Смъртни случаи (днес): {total_new_deaths_today}</Alert.Heading>
-                </Alert>
-                {
-                    props.country === "GLOBAL"
-                        ? (<h4>
-                            <a href="https://www.worldometers.info/coronavirus/" target="_blank">
-                                За таблица виж тук: www.worldometers.info/coronavirus/</a>
-                        </h4>)
-                        : (
+    return useMemo(() => {
+        console.log(componentState);
+        
+        if (status === "loading") {
+            return (<h4>Зареждане...</h4>);
+        } else if (status === "completed") {
+            if (!countryHasData) {
+                return <h4>Няма данни</h4>
+            }
+
+            return (
+                <div>
+                    <Alert variant="secondary">
+                        <Alert.Heading>Общ брой случаи: {total_cases}</Alert.Heading>
+                    </Alert>
+                    <Alert variant="danger">
+                        <Alert.Heading>Смъртни случаи: {total_deaths} ({deathPerc}%)</Alert.Heading>
+                    </Alert>
+                    <Alert variant="success">
+                        <Alert.Heading>Излекувани: {total_recovered} ({recPerc}%)</Alert.Heading>
+                    </Alert>
+                    <Alert variant="primary">
+                        <Alert.Heading>Активни случаи: {total_active_cases}</Alert.Heading>
+                    </Alert>
+                    <Alert variant="danger">
+                        <Alert.Heading>Нови случаи (днес): {total_new_cases_today} (+{newPerc}%)</Alert.Heading>
+                    </Alert>
+                    <Alert variant="danger">
+                        <Alert.Heading>Смъртни случаи (днес): {total_new_deaths_today}</Alert.Heading>
+                    </Alert>
+                    {
+                        props.country === "GLOBAL"
+                            ?
+                            <h4>
+                                <a href="https://www.worldometers.info/coronavirus/" target="_blank">
+                                    За таблица виж тук: www.worldometers.info/coronavirus/
+                                </a>
+                            </h4>
+                            :
                             <ApexChart chartData={componentState.chartData}/>
-                        )
-                }
-            </div>
-        );
-    } else if (componentState.loadStatus === "error") {
-        resultElement = (<h4>Грешка при зареждането, моля опитайте по-късно.</h4>)
-    }
-
-    return (
-        <div>
-            {resultElement}
-        </div>
-    )
-
+                    }
+                </div>
+            );
+        } else {
+            return (<h4>Грешка при зареждането, моля опитайте по-късно.</h4>)
+        }
+    }, [status])
 };
 
 export default Tracker;

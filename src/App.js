@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -12,17 +12,30 @@ const App = () => {
     }
 
     const [country, setCountry] = useState(localStorage.getItem("country"));
+    const [status, setStatus] = useState("loading");
 
     const setCountryHandle = (country) => {
         localStorage.setItem("country", country);
-        // console.log('Update App Country');
         setCountry(country);
+        setStatus("loading");
     };
+
+    useEffect(() => {
+
+    }, [country]);
 
     return (
         <div className="container text-center">
-            <Header country={country} setCountry={setCountryHandle}/>
-            <Tracker country={country} setCountry={setCountryHandle}/>
+            <Header
+                country={country}
+                setCountry={setCountryHandle}
+            />
+            <Tracker
+                country={country}
+                status={status}
+
+                setStatus={(val) => setStatus(val)}
+            />
             <Footer/>
         </div>
 
