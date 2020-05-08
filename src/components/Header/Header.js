@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import {countriesData} from "../../data/countriesData";
 import {DropdownButton, Dropdown} from "react-bootstrap";
 import {AppContext} from "../../contexts/AppContext";
+import {isLoading} from "../../common/LoadingStatus";
 
 const Header = () => {
     const [countryData,
@@ -16,7 +17,7 @@ const Header = () => {
     const handleDropdownItemClick = (countryKey) => {
         localStorage.setItem("country", countryKey);
         setCountry(countryKey);
-        setStatus("loading");
+        setStatus(isLoading);
     }
 
     return (

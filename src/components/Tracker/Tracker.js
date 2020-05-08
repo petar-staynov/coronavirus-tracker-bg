@@ -4,7 +4,7 @@ import {Alert} from "react-bootstrap";
 import ApexChart from "../ApexChart";
 import {mockBgTotalData} from "../../data/mockBgTotalData";
 import {mockBgTimelineData} from "../../data/mockBgTimelineData";
-import {isLoading} from "../../common/LoadingStatus";
+import {isLoaded, isLoading} from "../../common/LoadingStatus";
 
 const Tracker = (props) => {
     const [countryData,
@@ -50,7 +50,7 @@ const Tracker = (props) => {
         // Update context
         setCountryData(contextCountryData);
         setTimelineData(contextTimelineData)
-        setStatus("completed");
+        setStatus(isLoaded);
     }, [status])
 
 
@@ -79,9 +79,9 @@ const Tracker = (props) => {
 
     return (useMemo(() => {
         console.log(status)
-        if (isLoading === "loading") {
+        if (status === isLoading) {
             return (<h4>Зареждане...</h4>);
-        } else if (status === "completed") {
+        } else if (status === isLoaded) {
             if (!countryHasData) {
                 return <h4>Няма данни</h4>
             }
