@@ -1,4 +1,4 @@
-export const countriesData = {
+export const countriesDataBg = {
     GLOBAL: "GLOBAL",
     AF: "Афганистан",
     AL: "Албания",

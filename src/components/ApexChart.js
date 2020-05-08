@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import Chart from 'react-apexcharts'
 
 const ApexChart = (props) => {
-    // Total cases chart
     const [componentState, setComponentState] = useState({
         totalCasesChart: {
             series: [{
@@ -178,8 +177,8 @@ const ApexChart = (props) => {
 
             if (totalCases > 0) skipEmptyDays = false;
             //Skip days with no data and the last two entries
-            if (!skipEmptyDays && index < numberOfDates - 1) {
-                datesArr.push(formatDate(date));
+            if (!skipEmptyDays && index < numberOfDates) {
+                datesArr.push(date);
                 totalCasesArr.push(totalCases);
                 totalActiveCasesArr.push(activeCases);
                 newCasesArr.push(newDailyCases);
@@ -237,7 +236,6 @@ const ApexChart = (props) => {
                 }
             },
         });
-
     }, [props]);
 
     const calculateElementHeight = () => {

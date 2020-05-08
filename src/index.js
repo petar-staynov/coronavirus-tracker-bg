@@ -4,6 +4,16 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+/*
+* Initialise local storage
+* for storing last selected country
+*/
+
+if (!localStorage.getItem("country")) {
+    localStorage.setItem("country", "BG")
+}
+
+/* Render app */
 ReactDOM.render(<App />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

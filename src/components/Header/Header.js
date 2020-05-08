@@ -1,9 +1,23 @@
-import React from 'react';
-import {countriesData} from "../data/countriesData";
+import React, {useContext} from 'react';
+import {countriesData} from "../../data/countriesData";
 import {DropdownButton, Dropdown} from "react-bootstrap";
+import {AppContext} from "../../contexts/AppContext";
 
-const Header = (props) => {
-    const {country, setCountry} = props;
+const Header = () => {
+    const [countryData,
+        setCountryData,
+        timelineData,
+        setTimelineData,
+        country,
+        setCountry,
+        status,
+        setStatus] = useContext(AppContext);
+
+    const handleDropdownItemClick = (countryKey) => {
+        localStorage.setItem("country", countryKey);
+        setCountry(countryKey);
+        setStatus("loading");
+    }
 
     return (
         <div style={{marginBottom: "8px"}}>
@@ -19,7 +33,7 @@ const Header = (props) => {
                 {Object.keys(countriesData).map(key => {
                     return (
                         <Dropdown.Item
-                            onClick={() => setCountry(key)}
+                            onClick={() => handleDropdownItemClick(key)}
                             key={key}>{countriesData[key]}
                         </Dropdown.Item>
                     )
