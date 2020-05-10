@@ -17,12 +17,27 @@ const Tracker = (props) => {
         setStatus] = useContext(AppContext);
 
     useEffect(() => {
-        if(status !== "loading") {
+        if (status !== "loading") {
             return
         }
 
+        let resCountryData =
+        fetch(`https://api.thevirustracker.com/free-api?countryTotal=${country}`)
+            .then(res => res.json())
+            .then(json => {
+                console.log(json)
+                return json;
+            })
+            .catch(e => {
+                console.log(e)
+                return null;
+            });
 
-        const resCountryData = mockBgTotalData;
+        console.log(resCountryData);
+
+        return;
+
+
         const resTimeLineData = mockBgTimelineData;
 
         const countryInfo = resTimeLineData["countrytimelinedata"][0]["info"];
