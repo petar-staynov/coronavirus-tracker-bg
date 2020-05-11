@@ -1,7 +1,17 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Chart from 'react-apexcharts'
+import {AppContext} from "../contexts/AppContext";
 
-const ApexChart = (props) => {
+const ChartsContainer = () => {
+    const [countryData,
+        setCountryData,
+        timelineData,
+        setTimelineData,
+        country,
+        setCountry,
+        status,
+        setStatus] = useContext(AppContext);
+
     const [componentState, setComponentState] = useState({
         totalCasesChart: {
             series: [{
@@ -26,9 +36,8 @@ const ApexChart = (props) => {
             },
         },
         totalDeathCasesChart: {
-
             series: [{
-                data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
+                data: []
             }],
             options: {
                 chart: {
@@ -44,15 +53,13 @@ const ApexChart = (props) => {
                     enabled: true
                 },
                 xaxis: {
-                    categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
-                        'United States', 'China', 'Germany'
-                    ],
+                    categories: [],
                 }
             },
         },
         totalRecoveredCasesChart: {
             series: [{
-                data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
+                data: []
             }],
             options: {
                 chart: {
@@ -68,15 +75,13 @@ const ApexChart = (props) => {
                     enabled: true
                 },
                 xaxis: {
-                    categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
-                        'United States', 'China', 'Germany'
-                    ],
+                    categories: [],
                 }
             },
         },
         totalActiveCasesChart: {
             series: [{
-                data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
+                data: []
             }],
             options: {
                 chart: {
@@ -92,15 +97,13 @@ const ApexChart = (props) => {
                     enabled: true
                 },
                 xaxis: {
-                    categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
-                        'United States', 'China', 'Germany'
-                    ],
+                    categories: [],
                 }
             },
         },
         newCasesChart: {
             series: [{
-                data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
+                data: []
             }],
             options: {
                 chart: {
@@ -116,9 +119,7 @@ const ApexChart = (props) => {
                     enabled: true
                 },
                 xaxis: {
-                    categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
-                        'United States', 'China', 'Germany'
-                    ],
+                    categories: [],
                 }
             },
         },
@@ -129,8 +130,7 @@ const ApexChart = (props) => {
     const formatDate = (dateString) => {
         //Format date from "1/23/2020" to "23/01"
         const dateParams = dateString.split('/');
-        const dateFormated = `${dateParams[1]}/${dateParams[0]}`;
-        return dateFormated;
+        return `${dateParams[1]}/${dateParams[0]}`;
     };
 
     const sortObject = (o) => {
@@ -138,12 +138,10 @@ const ApexChart = (props) => {
     };
 
     useEffect(() => {
-        const apiData = props.chartData;
-        if (Object.keys(apiData).length <= 0) return undefined;
+        if (Object.keys(timelineData).length <= 0) return undefined;
 
-        const timelineDates = apiData.timeline;
-
-        //###Extract data for chart###
+        const timelineItems = timelineData.timeline;
+        /* ***********Extract data for chart ********** */
         let skipEmptyDays = true;
         let old_total_cases = null;
 
@@ -152,14 +150,14 @@ const ApexChart = (props) => {
         let newCasesArr = [];
         let totalActiveCasesArr = [];
 
+        const timelineItemsSorted = sortObject(timelineItems);
+        const numberOfDates = Object.keys(timelineItemsSorted).length;
 
-        const timelineDatesSorted = sortObject(timelineDates);
-        const numberOfDates = Object.keys(timelineDatesSorted).length;
         let lastIndex = 0;
         let lastTotalCases = 0;
-        Object.keys(timelineDatesSorted).forEach((date, index) => {
+        Object.keys(timelineItemsSorted).forEach((date, index) => {
             //date = key
-            const dayInfo = timelineDates[date];
+            const dayInfo = timelineItemsSorted[date];
 
             const totalCases = Math.abs(dayInfo.total_cases);
             //calculate new daily cases since API is unreliable
@@ -236,7 +234,7 @@ const ApexChart = (props) => {
                 }
             },
         });
-    }, [props]);
+    }, [timelineData]);
 
     const calculateElementHeight = () => {
         const datesNumber = componentState.totalCasesChart.series[0].data.length;
@@ -270,4 +268,4 @@ const ApexChart = (props) => {
     );
 };
 
-export default ApexChart;
+export default ChartsContainer;

@@ -1,13 +1,10 @@
 import React, {useState, createContext} from 'react';
-import {mockBgTotalData} from '../data/mockBgTotalData'
-import {mockBgTimelineData} from "../data/mockBgTimelineData";
 
 export const AppContext = createContext();
 
 export const CountryDataProvider = (props) => {
-    const [countryData, setCountryData] = useState(mockBgTotalData);
-    const [timelineData, setTimelineData] = useState(mockBgTimelineData);
-
+    const [countryData, setCountryData] = useState({});
+    const [timelineData, setTimelineData] = useState({});
     const [country, setCountry] = useState(localStorage.getItem("country"));
     const [status, setStatus] = useState("loading");
 
@@ -24,4 +21,4 @@ export const CountryDataProvider = (props) => {
         ]}>{props.children}
         </AppContext.Provider>
     )
-}
+};

@@ -1,10 +1,8 @@
-import React, {useEffect, useContext, useMemo} from 'react';
+import React, {useContext, useEffect, useMemo} from 'react';
 import {AppContext} from "../../contexts/AppContext";
 import {Alert} from "react-bootstrap";
-import ApexChart from "../ApexChart";
-import {mockBgTotalData} from "../../data/mockBgTotalData";
-import {mockBgTimelineData} from "../../data/mockBgTimelineData";
-import {isLoaded, isLoading} from "../../common/LoadingStatus";
+import ChartsContainer from "../ChartsContainer";
+import {isError, isLoaded, isLoading} from "../../common/LoadingStatus";
 
 const Tracker = (props) => {
     const [countryData,
@@ -21,52 +19,102 @@ const Tracker = (props) => {
             return
         }
 
-        let resCountryData =
-        fetch(`https://api.thevirustracker.com/free-api?countryTotal=${country}`)
-            .then(res => res.json())
-            .then(json => {
-                console.log(json)
-                return json;
-            })
-            .catch(e => {
-                console.log(e)
-                return null;
-            });
+        /* **************** SET TODAY DATA **************** */
+        if (country === "GLOBAL") {
+            /* **************** GLOBAL DATA IS RECEIVED AS STREAM **************** */
+            const fetchDataGlobal = async () => {
+                const globalDataResult = await fetch(
+                    'https://api.thevirustracker.com/free-api?global=stats', {})
+                    .then(res => res.body)
+                    .then(body => {
+                        const reader = body.getReader();
+                        return reader
+                            .read()
+                            .then(({done, value}) => {
+                                if (done) {
+                                    reader.close();
+                                }
 
-        console.log(resCountryData);
+                                let str = "";
+                                for (let i = 0; i < value.length; i++) {
+                                    str += String.fromCharCode(parseInt(value[i]));
+                                }
+                                return JSON.parse(str);
+                            });
+                    })
+                    .then(json => {
+                        return json.results[0];
+                    });
 
-        return;
+                setCountryData(globalDataResult);
+                console.log(globalDataResult);
+                return true;
+            };
+            fetchDataGlobal()
+                .then(r => {
+                    if (r === true) {
+                        setStatus(isLoaded);
+                    }
+                });
+        } else {
+            const fetchData = async () => {
+                const countryDataResult = await fetch(`https://api.thevirustracker.com/free-api?countryTotal=${country}`)
+                    .then(res => res.json())
+                    .then(json => {
+                        return json;
+                    })
+                    .catch(e => {
+                        console.log(e);
+                        setStatus(isError);
+                        return {};
+                    });
 
+                const countryData = countryDataResult["countrydata"][0];
+                setCountryData(countryData);
 
-        const resTimeLineData = mockBgTimelineData;
+                const timelineItemsResult = await fetch(`https://api.thevirustracker.com/free-api?countryTimeline=${country}`)
+                    .then(res => res.json())
+                    .then(json => {
+                        return json;
+                    })
+                    .catch(e => {
+                        console.log(e);
+                        return {};
+                    });
 
-        const countryInfo = resTimeLineData["countrytimelinedata"][0]["info"];
-        const timelineItems = resTimeLineData["timelineitems"][0];
+                const countryInfo = timelineItemsResult["countrytimelinedata"][0]["info"];
+                const timelineItems = timelineItemsResult["timelineitems"][0];
 
-        let timelineItemsFormated = {};
+                let timelineItemsFormated = {};
 
-        //Format date from "3/31/20" to "03-30". Note the substracting of 1 day due to incorrect api data.
-        Object.keys(timelineItems).forEach(date => {
-            const item = timelineItems[date];
-            if (date !== "stat") {
-                const dateFormated = new Date(Date.parse(date)).toISOString().slice(5, 10);
-                timelineItemsFormated[dateFormated] = item
-            }
-        });
+                //Format date from "3/31/20" to "03-30". Note the substracting of 1 day due to incorrect api data.
+                Object.keys(timelineItems).forEach(date => {
+                    const item = timelineItems[date];
+                    if (date !== "stat") {
+                        const dateFormatted = new Date(Date.parse(date)).toISOString().slice(5, 10);
+                        timelineItemsFormated[dateFormatted] = item
+                    }
+                });
 
-        //Format data for context items
-        const contextCountryData = resCountryData["countrydata"][0];
-        const contextTimelineData = {
-            country: countryInfo.title,
-            countryCode: countryInfo.code,
-            timeline: timelineItemsFormated,
-        };
+                //Format data for context items
+                const timelineData = {
+                    country: countryInfo.title,
+                    countryCode: countryInfo.code,
+                    timeline: timelineItemsFormated,
+                };
 
-        // Update context
-        setCountryData(contextCountryData);
-        setTimelineData(contextTimelineData)
-        setStatus(isLoaded);
-    }, [status])
+                setTimelineData(timelineData);
+
+                return true;
+            };
+            fetchData()
+                .then(r => {
+                    if (r === true) {
+                        setStatus(isLoaded);
+                    }
+                });
+        }
+    }, [status]);
 
 
     const {
@@ -93,14 +141,12 @@ const Tracker = (props) => {
         (!(Object.keys(countryData).length === 0 && Object.keys(timelineData).length === 0));
 
     return (useMemo(() => {
-        console.log(status)
         if (status === isLoading) {
             return (<h4>Зареждане...</h4>);
         } else if (status === isLoaded) {
             if (!countryHasData) {
                 return <h4>Няма данни</h4>
             }
-
             return (
                 <div>
                     <Alert variant="secondary">
@@ -123,7 +169,7 @@ const Tracker = (props) => {
                         <Alert.Heading>Смъртни случаи (днес): {total_new_deaths_today}</Alert.Heading>
                     </Alert>
                     {
-                        props.country === "GLOBAL"
+                        country === "GLOBAL"
                             ?
                             <h4>
                                 <a href="https://www.worldometers.info/coronavirus/" target="_blank">
@@ -131,7 +177,7 @@ const Tracker = (props) => {
                                 </a>
                             </h4>
                             :
-                            <ApexChart chartData={timelineData}/>
+                            <ChartsContainer/>
                     }
                 </div>
             );
