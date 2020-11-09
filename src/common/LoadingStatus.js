@@ -1,5 +1,7 @@
-export const isLoading = "loading";
+const LoadingStatus = {
+    Loading: "loading",
+    Loaded: "loaded",
+    Error: "error"
+};
 
-export const isLoaded = "loaded";
-
-export const isError = "error";
+export default LoadingStatus;

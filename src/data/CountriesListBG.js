@@ -1,4 +1,4 @@
-export const countriesDataBg = {
+export const CountriesListBG = {
     GLOBAL: "GLOBAL",
     AF: "Афганистан",
     AL: "Албания",

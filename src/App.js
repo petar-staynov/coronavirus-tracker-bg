@@ -1,21 +1,21 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
-import Footer from "./components/Footer/Footer";
-import Header from "./components/Header/Header";
-import Tracker from "./components/Tracker/Tracker";
-import {CountryDataProvider} from "./contexts/AppContext";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
+import {AppContextProvider} from "./contexts/AppContext";
+import TrackerContainer from "./components/TrackerContainer";
 
 const App = () => {
     return (
-        <CountryDataProvider>
+        <AppContextProvider>
             <div className="container text-center">
                 <Header/>
-                <Tracker/>
+                <TrackerContainer/>
                 <Footer/>
             </div>
-        </CountryDataProvider>
+        </AppContextProvider>
     );
 };
 
