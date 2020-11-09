@@ -1,3 +1,7 @@
+html {
+    overflow-y: scroll;
+}
+
 .dropdown-menu.show {
     height: 480px;
     width: 280px; /* Need a specific value to work */
