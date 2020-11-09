@@ -4,6 +4,7 @@ import Tracker from "./Tracker";
 import {AppContext} from "../contexts/AppContext";
 import LoadingStatus from "../common/LoadingStatus";
 import {CountriesList} from "../data/CountriesList";
+import TrackerGlobal from "./TrackerGlobal";
 
 const TrackerContainer = (props) => {
     const {
@@ -19,21 +20,38 @@ const TrackerContainer = (props) => {
         const countryInfo = CountriesList[country];
         const countrySlug = countryInfo["Slug"];
 
-        fetch(`https://api.covid19api.com/country/${countrySlug}`)
-            .then(res => {
-                if(!res.ok){
-                    throw new Error(`${res.json()}`)
-                }
-                return res.json();
+        if (country === "GLOBAL") {
+            fetch(`https://api.covid19api.com/summary`)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`${res.json()}`)
+                    }
+                    return res.json();
+                })
+                .then(json => {
+                    setCountryData(json);
+                    setStatus(LoadingStatus.Loaded);
+                }).catch(err => {
+                console.log(err)
+                setStatus(LoadingStatus.Error);
             })
-            .then(json => {
-                setCountryData(json);
-                setStatus(LoadingStatus.Loaded);
-            }).catch(err => {
-            console.log(err)
-            setStatus(LoadingStatus.Error);
-        })
-    },[country]);
+        } else {
+            fetch(`https://api.covid19api.com/country/${countrySlug}`)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`${res.json()}`)
+                    }
+                    return res.json();
+                })
+                .then(json => {
+                    setCountryData(json);
+                    setStatus(LoadingStatus.Loaded);
+                }).catch(err => {
+                console.log(err)
+                setStatus(LoadingStatus.Error);
+            })
+        }
+    }, [country]);
 
     return (
         <>
@@ -43,7 +61,11 @@ const TrackerContainer = (props) => {
                 status === LoadingStatus.Loading ? <h3>Loading...</h3> : null
             }
             {
-                status === LoadingStatus.Loaded ? <Tracker data={countryData}/> : null
+                status === LoadingStatus.Loaded
+                    ? country === "GLOBAL"
+                    ? <TrackerGlobal data={countryData}/>
+                    : <Tracker data={countryData}/>
+                    : null
             }
             {
                 status === LoadingStatus.Error ? <h3>Error loading data!</h3> : null

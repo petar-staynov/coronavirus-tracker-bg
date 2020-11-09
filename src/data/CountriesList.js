@@ -1,4 +1,9 @@
 export const CountriesList = {
+    "GLOBAL": {
+        "Country": "GLOBAL",
+        "ISO2": "GLOBAL",
+        "Slug": "global"
+    },
     "AD": {
         "Country": "Andorra",
         "ISO2": "AD",

@@ -1,20 +1,23 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Alert} from "react-bootstrap";
 import ChartsContainer from "./ChartsContainer";
+import {AppContext} from "../contexts/AppContext";
+import TrackerGlobal from "./TrackerGlobal";
+import {numberWithSpaces} from "../utils/NumberFormatUtils";
 
 const Tracker = ({data}) => {
-    const dataLength = data.length;
-
     // Calculate data for the main display
-    let activeCases = data[data.length - 1]["Active"];
-    let recoveredCases = data[data.length - 1]["Recovered"];
-    let deceasedCases = data[data.length - 1]["Deaths"];
-    let totalCases = data[data.length - 1]["Confirmed"];
+    const activeCases = data[data.length - 1]["Active"];
+    const recoveredCases = data[data.length - 1]["Recovered"];
+    const deceasedCases = data[data.length - 1]["Deaths"];
+    const totalCases = data[data.length - 1]["Confirmed"];
 
-    let deathPerc = ((deceasedCases / totalCases) * 100).toFixed(2);
+    const closedCases = recoveredCases + deceasedCases;
+
+    let deathPerc = ((deceasedCases / closedCases) * 100).toFixed(2);
     deathPerc = isFinite(deathPerc) ? deathPerc : 0;
 
-    let recPerc = ((recoveredCases / totalCases) * 100).toFixed(2);
+    let recPerc = ((recoveredCases / closedCases) * 100).toFixed(2);
     recPerc = isFinite(recPerc) ? recPerc : 0;
 
     // Calculate data for the charts
@@ -40,7 +43,7 @@ const Tracker = ({data}) => {
 
         // Calculate the total new cases for the previous few days
         let newCasesTotal = 0;
-        for (let prevDayIndx = dayIndx - (daysToSkip - 1); prevDayIndx < dayIndx; prevDayIndx++){
+        for (let prevDayIndx = dayIndx - (daysToSkip - 1); prevDayIndx < dayIndx; prevDayIndx++) {
             const day = data[prevDayIndx];
             const prevDay = data[prevDayIndx - 1];
 
@@ -59,22 +62,22 @@ const Tracker = ({data}) => {
 
     // Render
     return (
-        <div>
+        <>
             <Alert variant="secondary">
-                <Alert.Heading>Общ брой случаи: {totalCases}</Alert.Heading>
+                <Alert.Heading>Общ брой случаи: {numberWithSpaces(totalCases)}</Alert.Heading>
             </Alert>
             <Alert variant="primary">
-                <Alert.Heading>Активни случаи: {activeCases}</Alert.Heading>
+                <Alert.Heading>Активни случаи: {numberWithSpaces(activeCases)}</Alert.Heading>
             </Alert>
             <Alert variant="danger">
-                <Alert.Heading>Починали: {deceasedCases} ({deathPerc}%)</Alert.Heading>
+                <Alert.Heading>Починали: {numberWithSpaces(deceasedCases)} ({deathPerc}%)</Alert.Heading>
             </Alert>
             <Alert variant="success">
-                <Alert.Heading>Излекувани: {recoveredCases} ({recPerc}%)</Alert.Heading>
+                <Alert.Heading>Излекувани: {numberWithSpaces(recoveredCases)} ({recPerc}%)</Alert.Heading>
             </Alert>
             <hr/>
             <ChartsContainer data={chartsData}/>
-        </div>
+        </>
     );
 };
 
