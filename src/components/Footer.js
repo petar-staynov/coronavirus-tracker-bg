@@ -4,9 +4,12 @@ class Footer extends Component {
     render() {
         return (
             <div style={{textAlign: 'center'}}>
-                <small><a href={"https://thevirustracker.com/api"}>api</a></small>
+                <hr/>
+                <small><a href={"https://covid19api.com/"}>api</a></small>
                 <br/>
                 <small><a href={"https://github.com/petar-staynov/coronavirus-tracker-bg"}>GitHub</a></small>
+                <br/>
+                <small><strong>&copy; Petar Staynov 2020-2021 &copy;</strong></small>
             </div>
         );
     }
